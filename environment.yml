@@ -1,0 +1,45 @@
+name: genegenie
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python
+  - python=3.11
+
+  # Core genomics libraries (from bioconda)
+  - cyvcf2=0.30.18
+  - pysam=0.21.0
+  - biopython=1.81
+  - scikit-allel=1.3.6
+
+  # Command-line tools
+  - samtools=1.17
+  - bcftools=1.17
+  - tabix=1.11
+  - htslib=1.17
+
+  # Data analysis
+  - numpy=1.24.3
+  - pandas=2.0.3
+  - scipy=1.11.0
+
+  # Utilities
+  - requests=2.31.0
+  - tqdm=4.65.0
+
+  # Development tools
+  - pytest=7.4.0
+  - pytest-cov=4.1.0
+  - ipython=8.14.0
+  - jupyter=1.0.0
+
+  # Documentation
+  - sphinx=7.0.0
+  - sphinx-rtd-theme=1.3.0
+
+  # Pip packages not in conda
+  - pip
+  - pip:
+    - tracemalloc-ng

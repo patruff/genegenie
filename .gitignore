@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Data files (DO NOT commit actual genomic data)
+data/*.vcf
+data/*.vcf.gz
+data/*.vcf.gz.tbi
+data/*.bam
+data/*.bam.bai
+data/*.cram
+data/*.cram.crai
+data/*.fastq
+data/*.fastq.gz
+data/*.fasta
+data/*.fa
+data/*.fna
+
+# Results and outputs
+results/
+output/
+*.log
+*.html
+*.pdf
+
+# SnpEff/VEP
+snpeff_stats.html
+*.snpeff
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
