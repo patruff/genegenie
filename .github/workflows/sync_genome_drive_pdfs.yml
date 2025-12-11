@@ -1,0 +1,36 @@
+name: Sync Genome PDFs from Google Drive
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install google-generativeai google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+    - name: Sync PDFs from Google Drive
+      env:
+        GOOGLE_GENAI_API_KEY: ${{ secrets.GOOGLE_GENAI_API_KEY }}
+        GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+      run: |
+        python mcp_server/sync_genome_drive_pdfs.py
+
+    - name: Summary
+      run: |
+        echo "✅ Sync complete!"
+        echo "Check the logs above for details on synced papers."
