@@ -22,6 +22,11 @@ from .annotate import (
     load_clinvar_database,
     annotate_with_clinvar
 )
+from .pdf_parser import (
+    SNPExtractor,
+    extract_snps_from_pdf,
+    extract_snps_from_directory
+)
 
 __all__ = [
     'extract_variants_by_rsid',
@@ -38,4 +43,7 @@ __all__ = [
     'query_vep_api',
     'load_clinvar_database',
     'annotate_with_clinvar',
+    'SNPExtractor',
+    'extract_snps_from_pdf',
+    'extract_snps_from_directory',
 ]

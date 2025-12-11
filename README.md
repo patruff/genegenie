@@ -1,20 +1,41 @@
 # GeneGenie - Whole Genome Sequencing Analysis Toolkit
 
-A comprehensive Python toolkit for analyzing 30x whole genome sequencing (WGS) data with a focus on longevity-associated variants.
+A comprehensive Python toolkit for analyzing 30x whole genome sequencing (WGS) data with focus on longevity, personality, cognition, behavior, and addiction genetics.
 
 ## Overview
 
-GeneGenie provides optimized workflows for analyzing WGS data from Sequencing.com and other providers, leveraging high-performance libraries like cyvcf2, pysam, and BioPython to handle billions of genomic variants efficiently.
+GeneGenie provides optimized workflows for analyzing WGS data from Sequencing.com and other providers, leveraging high-performance libraries like cyvcf2, pysam, and BioPython to handle billions of genomic variants efficiently. Now includes comprehensive trait analysis and PDF parsing for extracting SNPs from research papers.
 
 ## Features
 
+### Genomic Analysis
 - **Longevity Variant Analysis**: Query and analyze validated longevity-associated variants (APOE, FOXO3, CDKN2B, etc.)
+- **Comprehensive Trait Analysis**: 100+ SNPs across personality, cognition, behavior, addiction, and physical traits
 - **APOE Genotyping**: Determine ε2/ε3/ε4 alleles and associated Alzheimer's risk
-- **Polygenic Risk Scoring**: Calculate weighted longevity scores from multiple genetic markers
+- **Polygenic Scoring**: Calculate weighted scores from multiple genetic markers
 - **High-Performance Processing**: Leverages cyvcf2 (168x faster than PyVCF) for VCF analysis
-- **Comprehensive File Format Support**: Works with VCF, BAM, CRAM, FASTQ formats
-- **Functional Annotation Integration**: SnpEff, VEP, and ClinVar integration
+
+### Trait Categories Analyzed
+- **Cognition**: Intelligence, memory, processing speed
+- **Personality**: Big Five traits (neuroticism, extraversion, openness, conscientiousness, agreeableness)
+- **Addiction**: Alcohol, nicotine, cannabis, caffeine dependence
+- **Behavior**: Risk-taking, sleep patterns, chronotype, aggression
+- **Mental Health**: Depression, anxiety, ADHD, schizophrenia risk
+- **Physical**: Athletic performance, muscle strength, pain sensitivity
+- **Sensory**: Taste perception, smell sensitivity, perfect pitch
+
+### PDF Paper Analysis
+- **SNP Extraction**: Automatically extract rsIDs, genes, and positions from research papers
+- **Build Custom Databases**: Create SNP libraries from your collection of papers
+- **Table Parsing**: Extract GWAS result tables from PDFs
+- **Context Extraction**: Get surrounding text for each SNP mention
+- **Batch Processing**: Process entire directories of papers
+
+### Technical Features
+- **File Format Support**: VCF, BAM, CRAM, FASTQ formats
+- **Functional Annotation**: SnpEff, VEP, and ClinVar integration
 - **Reproducible Workflows**: Complete environment specifications and logging
+- **Memory Efficient**: Stream billions of variants in constant memory
 
 ## Installation
 
@@ -46,6 +67,28 @@ pip install -r requirements.txt
 python src/genegenie/longevity_analyzer.py data/my_genome.vcf.gz
 
 # Results will be saved to results/ directory
+```
+
+### Analyze All Personality & Behavior Traits
+
+```bash
+# Run comprehensive trait analysis (100+ SNPs)
+python src/genegenie/trait_analyzer.py data/my_genome.vcf.gz
+
+# Results saved to trait_results/ directory
+```
+
+### Extract SNPs from Research Papers
+
+```bash
+# Extract SNPs from a single paper
+python examples/pdf_parser_example.py basic paper.pdf
+
+# Process entire directory of papers
+python examples/pdf_parser_example.py directory papers/
+
+# Build custom SNP database from papers
+python examples/pdf_parser_example.py database papers/
 ```
 
 ### Extract Specific Variants
