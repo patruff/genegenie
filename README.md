@@ -31,6 +31,15 @@ GeneGenie provides optimized workflows for analyzing WGS data from Sequencing.co
 - **Context Extraction**: Get surrounding text for each SNP mention
 - **Batch Processing**: Process entire directories of papers
 
+### RAG System (MCP Server) 🚀 NEW!
+- **Genome Papers RAG**: Query genomics papers with AI using Google's File Search
+- **Google Drive Sync**: Automatically sync PDFs from `genomepapers` folder (every 6 hours)
+- **Natural Language Queries**: Ask questions about your paper library with AI-powered search
+- **Citation Support**: Get AI-generated answers grounded in papers with source citations
+- **Separate Store**: Independent from longevitypdf for genome-specific research
+- **FREE Storage**: Zero cost for storage and query embeddings (only pay ~$0.002/paper for indexing)
+- **Monthly SNP Updates**: Extract new SNPs from papers and update trait database
+
 ### Technical Features
 - **File Format Support**: VCF, BAM, CRAM, FASTQ formats
 - **Functional Annotation**: SnpEff, VEP, and ClinVar integration
@@ -91,6 +100,18 @@ python examples/pdf_parser_example.py directory papers/
 python examples/pdf_parser_example.py database papers/
 ```
 
+### Query Papers with AI (RAG System)
+
+```bash
+# Setup MCP server in Claude Desktop (see MCP Server Setup below)
+# Then in Claude Desktop:
+
+"Upload ~/papers/savage_2018_intelligence.pdf"
+"What SNPs are genome-wide significant for intelligence?"
+"Which CHRNA5 variants affect nicotine dependence?"
+"Compare FOXO3 variants across populations"
+```
+
 ### Extract Specific Variants
 
 ```python
@@ -105,26 +126,210 @@ variants = extract_variants_by_rsid(
 print(f"APOE genotype: {variants}")
 ```
 
+## 🔄 Monthly Workflow: Growing Your SNP Database
+
+GeneGenie enables a powerful workflow for continuously expanding your trait SNP database:
+
+```mermaid
+graph LR
+    A[New Papers] --> B[Google Drive genomepapers/]
+    B --> C[Auto-sync every 6h]
+    C --> D[RAG System]
+    D --> E[Query with AI]
+    E --> F[Extract SNPs]
+    F --> G[Add to trait_db.py]
+    G --> H[Re-analyze Genome]
+    H --> I[Updated Reports]
+```
+
+### Step-by-Step Monthly Update Process
+
+#### 1. **Add New Papers** (Continuous)
+```bash
+# Option A: Upload directly via MCP
+# In Claude Desktop: "Upload ~/papers/new_gwas_2024.pdf"
+
+# Option B: Add to Google Drive
+# Just drop PDFs into your genomepapers/ folder
+# Auto-syncs every 6 hours via GitHub Actions
+```
+
+#### 2. **Query Papers with AI** (Interactive)
+```bash
+# In Claude Desktop (via MCP server):
+"What new SNPs are associated with intelligence in 2024 papers?"
+"List all rs IDs mentioned with p < 5e-8"
+"What genes are associated with alcohol dependence?"
+```
+
+#### 3. **Extract SNPs from Papers** (Monthly)
+```bash
+# Extract all SNPs from newly added papers
+python examples/pdf_parser_example.py directory papers/
+
+# Or extract from specific paper
+python examples/pdf_parser_example.py basic papers/new_gwas.pdf
+
+# Build consolidated database
+python examples/pdf_parser_example.py database papers/
+# → Outputs: custom_snp_database.json
+```
+
+#### 4. **Add SNPs to Trait Database** (Monthly)
+```python
+# Edit src/genegenie/utils/trait_db.py
+# Add new SNPs to appropriate categories:
+
+'rs12345678': {
+    'gene': 'NEWGENE',
+    'trait': 'Intelligence',
+    'chrom': 'chr1',
+    'pos': 12345678,
+    'ref': 'A',
+    'alt': 'G',
+    'effect_allele': 'G',
+    'effect_size': 0.025,
+    'p_value': 3.2e-12,
+    'description': 'New GWAS hit from 2024 study',
+    'paper': 'Smith et al. (2024) Nat Genet',
+    'category': 'cognition',
+}
+```
+
+#### 5. **Re-analyze Your Genome** (Monthly)
+```bash
+# Run trait analysis with updated database
+python src/genegenie/trait_analyzer.py data/my_genome.vcf.gz
+
+# Compare with previous results to see new insights
+diff trait_results/trait_genetics_report.md \
+     previous_results/trait_genetics_report.md
+```
+
+#### 6. **Track Database Growth** (Monthly)
+```python
+from genegenie.utils.trait_db import ALL_TRAIT_SNPS, get_all_categories
+
+print(f"Total SNPs: {len(ALL_TRAIT_SNPS)}")
+for category in get_all_categories():
+    snps = get_snps_by_category(category)
+    print(f"{category}: {len(snps)} SNPs")
+```
+
+### Example Monthly Update
+
+```bash
+# January 2025: Start with 100 SNPs
+# Add 5 new GWAS papers to genomepapers/ folder
+# Wait for auto-sync or manually upload
+
+# Query RAG system
+# → "What are the newest intelligence SNPs from 2024?"
+# → AI returns: rs999888, rs777666, rs555444
+
+# Extract and add to trait_db.py
+# Re-run analysis
+python src/genegenie/trait_analyzer.py data/genome.vcf.gz
+
+# Now have 105 SNPs, updated intelligence score!
+```
+
 ## Project Structure
 
 ```
 genegenie/
 ├── src/genegenie/
-│   ├── analysis/          # Core analysis modules
-│   │   ├── vcf_utils.py   # VCF file parsing and analysis
-│   │   ├── bam_utils.py   # BAM/CRAM alignment analysis
-│   │   ├── fastq_utils.py # FASTQ quality control
-│   │   └── annotate.py    # Functional annotation integration
-│   ├── utils/             # Utility functions
-│   │   ├── longevity_db.py # Longevity variant database
-│   │   └── performance.py  # Performance optimization helpers
-│   └── longevity_analyzer.py # Main analysis pipeline
-├── examples/              # Example usage scripts
-├── tests/                 # Unit tests
-├── data/                  # Data directory (add your VCF files here)
-├── requirements.txt       # Python dependencies
-└── environment.yml        # Conda environment specification
+│   ├── analysis/             # Core analysis modules
+│   │   ├── vcf_utils.py      # VCF file parsing and analysis
+│   │   ├── bam_utils.py      # BAM/CRAM alignment analysis
+│   │   ├── fastq_utils.py    # FASTQ quality control
+│   │   ├── annotate.py       # Functional annotation integration
+│   │   └── pdf_parser.py     # PDF SNP extraction
+│   ├── utils/                # Utility functions
+│   │   ├── longevity_db.py   # Longevity variant database
+│   │   ├── trait_db.py       # Trait SNP database (100+ SNPs)
+│   │   └── performance.py    # Performance optimization helpers
+│   ├── longevity_analyzer.py # Main longevity analysis pipeline
+│   └── trait_analyzer.py     # Comprehensive trait analysis
+├── mcp_server/               # RAG system (MCP server)
+│   ├── genome_papers_mcp.py  # MCP server for querying papers
+│   ├── sync_genome_drive_pdfs.py # Google Drive sync script
+│   ├── requirements.txt      # MCP dependencies
+│   └── README.md             # MCP server documentation
+├── examples/                 # Example usage scripts
+│   ├── basic_vcf_analysis.py
+│   ├── longevity_analysis_example.py
+│   ├── trait_analysis_example.py
+│   ├── pdf_parser_example.py
+│   └── performance_example.py
+├── tests/                    # Unit tests
+├── data/                     # Data directory (add your VCF files here)
+├── papers/                   # Research papers directory
+├── .github/workflows/        # GitHub Actions
+│   └── sync_genome_drive_pdfs.yml # Auto-sync every 6 hours
+├── requirements.txt          # Python dependencies
+└── environment.yml           # Conda environment specification
 ```
+
+## MCP Server Setup (RAG System)
+
+The Genome Papers RAG system allows you to query your research papers using AI.
+
+### 1. Install MCP Dependencies
+
+```bash
+pip install -r mcp_server/requirements.txt
+```
+
+### 2. Get Google GenAI API Key
+
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Click "Create API Key" (free!)
+3. Copy your API key
+
+### 3. Configure Claude Desktop
+
+Add to your Claude Desktop config:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "genome-papers": {
+      "command": "python",
+      "args": ["/absolute/path/to/genegenie/mcp_server/genome_papers_mcp.py"],
+      "env": {
+        "GOOGLE_GENAI_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### 4. Setup Google Drive Auto-Sync (Optional)
+
+1. Create `genomepapers` folder in Google Drive
+2. Get service account credentials (see [MCP README](mcp_server/README.md))
+3. Share folder with service account
+4. Add GitHub secrets:
+   - `GOOGLE_GENAI_API_KEY`
+   - `GOOGLE_DRIVE_CREDENTIALS`
+
+Papers will auto-sync every 6 hours! 🎉
+
+### 5. Start Querying
+
+In Claude Desktop:
+```
+Upload ~/papers/gwas_intelligence.pdf
+What SNPs are genome-wide significant for intelligence?
+List all CHRNA5 variants mentioned
+```
+
+See [mcp_server/README.md](mcp_server/README.md) for full documentation.
 
 ## Data Requirements
 
@@ -134,6 +339,7 @@ This toolkit works with standard genomic file formats:
 - **BAM files**: Must have corresponding .bai index files
 - **Reference genome**: GRCh38 (default) or GRCh37
 - **Coverage**: Optimized for 30x WGS data
+- **Research Papers**: PDFs of GWAS studies, SNP papers, trait genetics research
 
 ### File Preparation
 
@@ -146,12 +352,35 @@ tabix -p vcf variants.vcf.gz
 samtools index alignment.bam
 ```
 
-## Key Longevity Variants Analyzed
+## Key Variants Analyzed
 
+### Longevity (50+ SNPs)
 - **APOE** (rs7412, rs429358): ε2/ε3/ε4 alleles affecting Alzheimer's risk and lifespan
 - **FOXO3** (rs2802292, rs2764264): Most replicated longevity association
 - **CDKN2B/ANRIL** (rs1063192): 9p21.3 locus associated with centenarian status
-- **Additional variants**: 50+ validated longevity-associated SNPs
+
+### Cognition & IQ (4+ SNPs)
+- **CADM2** (rs9320913): General cognitive ability
+- **BDNF** (rs6265): Val66Met - memory and cognition
+
+### Personality (4+ SNPs)
+- **MAGI1** (rs2572431): Neuroticism
+- **WSCD2** (rs8192510): Extraversion
+
+### Addiction (7+ SNPs)
+- **ADH1B** (rs1229984): Alcohol dependence (strong protective)
+- **CHRNA5** (rs16969968): Nicotine dependence
+- **CYP1A2** (rs2472297): Caffeine metabolism
+
+### Physical Traits (3+ SNPs)
+- **ACTN3** (rs1815739): "Gene for speed" (sprint vs endurance)
+- **SCN9A** (rs6746030): Pain sensitivity
+
+### Sensory (4+ SNPs)
+- **TAS2R38** (rs713598): Bitter taste perception
+- **OR6A2** (rs72921001): Cilantro aversion
+
+**Total: 100+ validated SNPs** - Database growing monthly via paper RAG system!
 
 ## Performance
 
@@ -205,6 +434,41 @@ For issues and questions:
 - GitHub Issues: https://github.com/yourusername/genegenie/issues
 - Documentation: See docs/
 
+## Workflow Summary
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    GeneGenie Workflow                        │
+└─────────────────────────────────────────────────────────────┘
+
+1. 📚 Add Papers
+   └─> Drop PDFs into Google Drive genomepapers/ folder
+   └─> Auto-sync every 6 hours to RAG system
+
+2. 🤖 Query with AI
+   └─> Ask questions in Claude Desktop via MCP server
+   └─> "What SNPs are significant for intelligence?"
+   └─> Get AI answers with citations
+
+3. 🧬 Extract SNPs
+   └─> python examples/pdf_parser_example.py directory papers/
+   └─> Get all rsIDs, genes, p-values from papers
+
+4. 📝 Update Database
+   └─> Add new SNPs to src/genegenie/utils/trait_db.py
+   └─> Include effect sizes, descriptions, papers
+
+5. 🔬 Analyze Genome
+   └─> python src/genegenie/trait_analyzer.py data/genome.vcf.gz
+   └─> Get updated trait scores with new SNPs
+
+6. 📊 Compare Results
+   └─> Track how your genetic understanding evolves
+   └─> Monthly updates as new GWAS papers published
+
+🔄 Repeat monthly for continuously growing insights!
+```
+
 ## Acknowledgments
 
 Built on the excellent work of:
@@ -212,3 +476,5 @@ Built on the excellent work of:
 - pysam (Andreas Heger, et al.)
 - BioPython community
 - GWAS Catalog and dbSNP teams
+- Google GenAI and File Search Tool
+- MCP Protocol (Anthropic)
