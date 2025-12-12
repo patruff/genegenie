@@ -77,3 +77,8 @@ snpeff_stats.html
 *.tmp
 *.temp
 .cache/
+temp_pdfs/
+
+# Credentials (NEVER commit these!)
+service_account.json
+*credentials*.json
