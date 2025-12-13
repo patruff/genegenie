@@ -34,6 +34,7 @@ GeneGenie provides optimized workflows for analyzing WGS data from Sequencing.co
 ### RAG System (MCP Server) 🚀 NEW!
 - **Genome Papers RAG**: Query genomics papers with AI using Google's File Search
 - **Google Drive Sync**: Automatically sync PDFs from `genomepapers` folder (every 6 hours)
+- **Weekly Paper Fetching**: Automated NCBI PubMed search and PDF download (every Monday)
 - **Natural Language Queries**: Ask questions about your paper library with AI-powered search
 - **Citation Support**: Get AI-generated answers grounded in papers with source citations
 - **Separate Store**: Independent from longevitypdf for genome-specific research
@@ -146,10 +147,15 @@ graph LR
 
 #### 1. **Add New Papers** (Continuous)
 ```bash
-# Option A: Upload directly via MCP
+# Option A: Automated Weekly Fetching (Recommended!)
+# GitHub Action automatically fetches new papers from NCBI every Monday
+# Papers are auto-uploaded to Google Drive genomepapers/ folder
+# See WEEKLY_PAPERS_SETUP.md for configuration
+
+# Option B: Upload directly via MCP
 # In Claude Desktop: "Upload ~/papers/new_gwas_2024.pdf"
 
-# Option B: Add to Google Drive
+# Option C: Add to Google Drive manually
 # Just drop PDFs into your genomepapers/ folder
 # Auto-syncs every 6 hours via GitHub Actions
 ```
@@ -266,7 +272,10 @@ genegenie/
 ├── data/                     # Data directory (add your VCF files here)
 ├── papers/                   # Research papers directory
 ├── .github/workflows/        # GitHub Actions
-│   └── sync_genome_drive_pdfs.yml # Auto-sync every 6 hours
+│   ├── sync_genome_drive_pdfs.yml # Auto-sync every 6 hours
+│   └── fetch_weekly_papers.yml    # Fetch papers from NCBI weekly
+├── fetch_weekly_papers.py    # Weekly NCBI paper fetcher script
+├── WEEKLY_PAPERS_SETUP.md    # Setup guide for weekly fetching
 ├── requirements.txt          # Python dependencies
 └── environment.yml           # Conda environment specification
 ```
@@ -442,7 +451,8 @@ For issues and questions:
 └─────────────────────────────────────────────────────────────┘
 
 1. 📚 Add Papers
-   └─> Drop PDFs into Google Drive genomepapers/ folder
+   └─> AUTOMATED: GitHub Action fetches new papers weekly from NCBI
+   └─> OR: Drop PDFs into Google Drive genomepapers/ folder
    └─> Auto-sync every 6 hours to RAG system
 
 2. 🤖 Query with AI

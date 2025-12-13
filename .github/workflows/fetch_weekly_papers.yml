@@ -1,0 +1,48 @@
+name: Fetch Weekly Genomics Papers
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  fetch-papers:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install biopython requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+    - name: Create service account file
+      env:
+        GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+      run: |
+        echo "$GOOGLE_DRIVE_CREDENTIALS" > service_account.json
+
+    - name: Fetch papers from NCBI and upload to Drive
+      env:
+        NCBI_EMAIL: ${{ secrets.NCBI_EMAIL }}
+        NCBI_API_KEY: ${{ secrets.NCBI_API_KEY }}
+      run: |
+        python fetch_weekly_papers.py
+
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -f service_account.json
+        rm -rf temp_pdfs
+
+    - name: Summary
+      run: |
+        echo "✅ Weekly paper fetch complete!"
+        echo "📄 Check the logs above for details on downloaded papers."
