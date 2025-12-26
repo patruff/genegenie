@@ -172,6 +172,25 @@ class TraitAnalyzer:
         self.trait_scores = scores
         return scores
 
+    def generate_visual_report(self) -> Path:
+        """
+        Generate interactive HTML visualization report.
+
+        Returns:
+            Path to generated HTML file
+        """
+        self.logger.info("Generating interactive visual report...")
+
+        from .visualization import create_visualization_from_analyzer
+
+        html_path = create_visualization_from_analyzer(
+            analyzer=self,
+            output_filename='trait_report.html'
+        )
+
+        self.logger.info(f"Visual report saved to {html_path}")
+        return html_path
+
     def generate_trait_report(self) -> str:
         """
         Generate comprehensive trait genetics report.
@@ -328,9 +347,12 @@ class TraitAnalyzer:
             'variants': variants,
         }
 
-    def run_analysis(self) -> str:
+    def run_analysis(self, generate_html: bool = True) -> str:
         """
         Execute complete trait analysis pipeline.
+
+        Args:
+            generate_html: Whether to generate interactive HTML visualization (default: True)
 
         Returns:
             Final report text
@@ -346,8 +368,13 @@ class TraitAnalyzer:
         # Export data
         self.export_to_csv()
 
-        # Generate report
+        # Generate markdown report
         report = self.generate_trait_report()
+
+        # Generate HTML visualization
+        if generate_html:
+            html_path = self.generate_visual_report()
+            self.logger.info(f"📊 Open in browser: {html_path.absolute()}")
 
         self.logger.info("Analysis complete!")
 

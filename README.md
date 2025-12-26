@@ -11,6 +11,7 @@ GeneGenie provides optimized workflows for analyzing WGS data from Sequencing.co
 ### Genomic Analysis
 - **Longevity Variant Analysis**: Query and analyze validated longevity-associated variants (APOE, FOXO3, CDKN2B, etc.)
 - **Comprehensive Trait Analysis**: 100+ SNPs across personality, cognition, behavior, addiction, and physical traits
+- **Interactive Visual Reports**: Beautiful HTML trait cards with genetic score scales and visual indicators
 - **APOE Genotyping**: Determine ε2/ε3/ε4 alleles and associated Alzheimer's risk
 - **Polygenic Scoring**: Calculate weighted scores from multiple genetic markers
 - **High-Performance Processing**: Leverages cyvcf2 (168x faster than PyVCF) for VCF analysis
@@ -85,7 +86,13 @@ python src/genegenie/longevity_analyzer.py data/my_genome.vcf.gz
 # Run comprehensive trait analysis (100+ SNPs)
 python src/genegenie/trait_analyzer.py data/my_genome.vcf.gz
 
-# Results saved to trait_results/ directory
+# Results saved to trait_results/ directory:
+#   - trait_report.html (interactive visual grid - open in browser!)
+#   - trait_genetics_report.md (detailed markdown report)
+#   - trait_variants.csv (raw variant data)
+
+# Or use the visual analysis example:
+python examples/visual_trait_analysis.py data/my_genome.vcf.gz
 ```
 
 ### Extract SNPs from Research Papers
@@ -251,6 +258,9 @@ genegenie/
 │   │   ├── fastq_utils.py    # FASTQ quality control
 │   │   ├── annotate.py       # Functional annotation integration
 │   │   └── pdf_parser.py     # PDF SNP extraction
+│   ├── visualization/        # Interactive visualizations
+│   │   ├── trait_visualizer.py # HTML trait grid generator
+│   │   └── __init__.py       # Visualization module
 │   ├── utils/                # Utility functions
 │   │   ├── longevity_db.py   # Longevity variant database
 │   │   ├── trait_db.py       # Trait SNP database (100+ SNPs)
@@ -266,6 +276,7 @@ genegenie/
 │   ├── basic_vcf_analysis.py
 │   ├── longevity_analysis_example.py
 │   ├── trait_analysis_example.py
+│   ├── visual_trait_analysis.py # Interactive HTML visualization
 │   ├── pdf_parser_example.py
 │   └── performance_example.py
 ├── tests/                    # Unit tests
